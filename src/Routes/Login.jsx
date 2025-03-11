@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FuzzyText from '../components/FuzzyText';
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -24,8 +25,8 @@ function Login() {
             const data = await response.json();
 
             if (data.token) {
-                localStorage.setItem('userToken', data.token);
-                localStorage.setItem('username', username);
+                sessionStorage.setItem('userToken', data.token);
+                sessionStorage.setItem('username', username);
                 console.log("username", username);
                 console.log("token", data.token);
                 navigate('/chat');
@@ -40,8 +41,16 @@ function Login() {
     return (
         <div className="bg-black text-white h-screen w-screen">
             <div className="flex flex-col items-center justify-center h-screen gap-10">
-                <h1 className="text-4xl font-bold">BlackChat</h1>
-                <form onSubmit={handleLogin} className="flex flex-col gap-4 items-center">
+                <div>
+                    <FuzzyText
+                        baseIntensity={0.1}
+                        hoverIntensity={0.3}
+                        enableHover={true}
+                    >
+                        RIVER
+                    </FuzzyText>
+                </div>
+                <form onSubmit={handleLogin} className="flex flex-col gap-4 items-center mt-10">
                     <input
                         type="text"
                         placeholder="Username"
@@ -51,7 +60,7 @@ function Login() {
                     />
                     <button
                         type="submit"
-                        className="bg-white text-black rounded-md px-8 py-2 hover:bg-gray-200"
+                        className="bg-white text-black rounded-md px-8 py-2 hover:bg-gray-200 w-full"
                         disabled={!username.trim()}
                     >
                         Login

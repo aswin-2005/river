@@ -4,14 +4,14 @@ import useWebSocket from '../SocketClient/useWebSocket';
 
 function Chat() {
   const navigate = useNavigate();
-  const username = localStorage.getItem('username');
-  const token = localStorage.getItem('userToken');
+  const username = sessionStorage.getItem('username');
+  const token = sessionStorage.getItem('userToken');
   const { messages, sendMessage, error } = useWebSocket(import.meta.env.VITE_WS_URL, username, token);
   const [input, setInput] = useState("");
 
   const handleLogout = () => {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('username');
+    sessionStorage.removeItem('userToken');
+    sessionStorage.removeItem('username');
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     fetch(`${backendUrl}/logout`, {
@@ -26,7 +26,9 @@ function Chat() {
     });
   };
 
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
+  if (!token || !username) {
+    navigate('/');
+  }
 
   return (
     <div className="bg-black text-white h-screen w-screen p-4">
