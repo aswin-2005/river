@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FuzzyText from '../components/FuzzyText';
+import { toast, Toaster } from 'react-hot-toast';
 
 function Login() {
     const [username, setUsername] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [cursorVisible, setCursorVisible] = useState(true);
+    const inputRef = useRef(null);
     const navigate = useNavigate();
+
+    // Blinking cursor effect
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCursorVisible(prev => !prev);
+        }, 530); // Standard cursor blink rate
+
+        return () => clearInterval(interval);
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -12,6 +25,7 @@ function Login() {
             return;
         }
 
+        setIsLoading(true);
         try {
             const backendUrl = import.meta.env.VITE_BACKEND_URL;
             const response = await fetch(`${backendUrl}/login`, {
@@ -32,14 +46,33 @@ function Login() {
                 navigate('/chat');
             } else if (data.userExists) {
                 console.error('Username already exists');
+                toast.error('Username already exists', {
+                    style: {
+                        background: '#333',
+                        color: '#fff',
+                        border: '1px solid #666',
+                    },
+                });
+                setUsername(''); // Clear input on error
             }
         } catch (error) {
             console.error('Error:', error);
+            toast.error('Connection error', {
+                style: {
+                    background: '#333',
+                    color: '#fff',
+                    border: '1px solid #666',
+                },
+            });
+            setUsername(''); // Clear input on error
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="bg-black text-white h-screen w-screen">
+            <Toaster position="top-center" />
             <div className="flex flex-col items-center justify-center h-screen gap-10">
                 <div>
                     <FuzzyText
@@ -50,22 +83,39 @@ function Login() {
                         RIVER
                     </FuzzyText>
                 </div>
-                <form onSubmit={handleLogin} className="flex flex-col gap-4 items-center mt-10">
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="p-2 bg-transparent"
-                        autoFocus
-                    />
-                    <button
-                        type="submit"
-                        className="bg-white text-black rounded-md px-8 py-2 hover:bg-gray-200 w-full"
-                        disabled={!username.trim()}
-                    >
-                        Login
-                    </button>
+                <form onSubmit={handleLogin} className="flex flex-col gap-4 items-center mt-10 font-mono">
+                    <div className="flex flex-col gap-2">
+                        <div className="text-left">$ ~ enter your user name and press enter</div>
+                        <div className="flex items-center">
+                            <span className="mr-2">{'>_'}</span>
+                            <div className="relative flex items-center">
+                                <div className="flex items-center pl-3">
+                                    <span className="text-gray-400">{username}</span>
+                                    <div
+                                        className={`h-5 w-2.5 bg-gray-400 ml-0.5 ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
+                                    />
+                                </div>
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && username.trim()) {
+                                            e.preventDefault();
+                                            handleLogin(e);
+                                        }
+                                    }}
+                                    className="absolute pl-1 top-0 left-0 w-0 h-0 opacity-0 overflow-hidden"
+                                    autoFocus
+                                    disabled={isLoading}
+                                />
+                            </div>
+                        </div>
+                        {isLoading && (
+                            <div className="text-white ">$ ~ logging in user...</div>
+                        )}
+                    </div>
                 </form>
             </div>
         </div>
