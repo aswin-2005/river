@@ -111,27 +111,27 @@ function Login() {
                         <div className="flex items-center">
                             <span className="mr-2">{'>_'}</span>
                             <div className="relative flex items-center">
-                                <div className="flex items-center pl-3">
-                                    <span className="text-gray-400">{username}</span>
+                                <div className="flex items-center pl-3 relative">
+                                    <input
+                                        ref={inputRef}
+                                        type="text"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && username.trim()) {
+                                                e.preventDefault();
+                                                handleLogin(e);
+                                            }
+                                        }}
+                                        className="bg-transparent text-gray-400 border-none outline-none w-full caret-transparent"
+                                        autoFocus
+                                        disabled={isLoading}
+                                    />
                                     <div
-                                        className={`h-5 w-2.5 bg-gray-400 ml-0.5 ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
+                                        className={`h-5 w-2.5 bg-gray-400 absolute right-0 ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
+                                        style={{ transform: 'translateX(100%)' }}
                                     />
                                 </div>
-                                <input
-                                    ref={inputRef}
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && username.trim()) {
-                                            e.preventDefault();
-                                            handleLogin(e);
-                                        }
-                                    }}
-                                    className="absolute pl-1 top-0 left-0 w-0 h-0 opacity-0 overflow-hidden"
-                                    autoFocus
-                                    disabled={isLoading}
-                                />
                             </div>
                         </div>
                         {isLoading && (
