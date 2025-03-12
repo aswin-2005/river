@@ -4,6 +4,7 @@ const useWebSocket = (url, username, token) => {
     const [socket, setSocket] = useState(null);
     const [messages, setMessages] = useState([]);
     const [error, setError] = useState(null);
+    const [activeUsers, setActiveUsers] = useState([]);
 
     useEffect(() => {
         const ws = new WebSocket(url);
@@ -18,12 +19,36 @@ const useWebSocket = (url, username, token) => {
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.type === "error") {
-                console.error("WebSocket Error:", data.message);
-                setError(data.message);
-                ws.close();
-            } else {
-                setMessages((prev) => [...prev, data]);
+
+            switch (data.code) {
+                case 100: // Join/Leave messages
+                    setMessages((prev) => [...prev, {
+                        type: 'system',
+                        message: data.message,
+                        sender: data.sender
+                    }]);
+                    // Update active users list
+                    if (data.active_users) {
+                        setActiveUsers(data.active_users);
+                    }
+                    break;
+
+                case 200: // Regular chat messages
+                    setMessages((prev) => [...prev, {
+                        type: 'message',
+                        message: data.message,
+                        sender: data.sender
+                    }]);
+                    break;
+
+                case 300: // Error messages
+                    console.error("WebSocket Error:", data.message);
+                    setError(data.message);
+                    ws.close();
+                    break;
+
+                default:
+                    console.warn("Unknown message code:", data.code);
             }
         };
 
@@ -34,6 +59,7 @@ const useWebSocket = (url, username, token) => {
 
         ws.onclose = () => {
             console.log("WebSocket connection closed");
+            setActiveUsers([]); // Clear active users when connection closes
         };
 
         setSocket(ws);
@@ -49,7 +75,7 @@ const useWebSocket = (url, username, token) => {
         }
     };
 
-    return { messages, sendMessage, error };
+    return { messages, sendMessage, error, activeUsers };
 };
 
 export default useWebSocket;

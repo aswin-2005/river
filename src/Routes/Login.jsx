@@ -44,7 +44,7 @@ function Login() {
                 <div>
                     <FuzzyText
                         baseIntensity={0.1}
-                        hoverIntensity={0.3}
+                        hoverIntensity={0.2}
                         enableHover={true}
                     >
                         RIVER
@@ -56,7 +56,8 @@ function Login() {
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="border-2 border-white rounded-md p-2 bg-transparent"
+                        className="p-2 bg-transparent"
+                        autoFocus
                     />
                     <button
                         type="submit"
