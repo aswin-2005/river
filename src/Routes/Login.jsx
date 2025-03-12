@@ -19,6 +19,28 @@ function Login() {
         return () => clearInterval(interval);
     }, []);
 
+    // Keep input focused at all times
+    useEffect(() => {
+        // Focus input on component mount
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+
+        // Add click event listener to document
+        const handleDocumentClick = () => {
+            if (inputRef.current && !isLoading) {
+                inputRef.current.focus();
+            }
+        };
+
+        document.addEventListener('click', handleDocumentClick);
+
+        // Clean up event listener on component unmount
+        return () => {
+            document.removeEventListener('click', handleDocumentClick);
+        };
+    }, [isLoading]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         if (!username.trim()) {
