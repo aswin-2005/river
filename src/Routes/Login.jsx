@@ -6,18 +6,8 @@ import { toast, Toaster } from 'react-hot-toast';
 function Login() {
     const [username, setUsername] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [cursorVisible, setCursorVisible] = useState(true);
     const inputRef = useRef(null);
     const navigate = useNavigate();
-
-    // Blinking cursor effect
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCursorVisible(prev => !prev);
-        }, 530); // Standard cursor blink rate
-
-        return () => clearInterval(interval);
-    }, []);
 
     // Keep input focused at all times
     useEffect(() => {
@@ -110,8 +100,8 @@ function Login() {
                         <div className="text-left">$ ~ enter your user name and press enter</div>
                         <div className="flex items-center">
                             <span className="mr-2">{'>_'}</span>
-                            <div className="relative flex items-center">
-                                <div className="flex items-center pl-3 relative">
+                            <div className="relative w-full max-w-md">
+                                <div className="flex items-center pl-3">
                                     <input
                                         ref={inputRef}
                                         type="text"
@@ -123,13 +113,10 @@ function Login() {
                                                 handleLogin(e);
                                             }
                                         }}
-                                        className="bg-transparent text-gray-400 border-none outline-none w-full caret-transparent"
+                                        className="bg-transparent text-gray-400 border-none outline-none w-full"
                                         autoFocus
                                         disabled={isLoading}
-                                    />
-                                    <div
-                                        className={`h-5 w-2.5 bg-gray-400 absolute right-0 ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
-                                        style={{ transform: 'translateX(100%)' }}
+                                        placeholder="type username here..."
                                     />
                                 </div>
                             </div>
