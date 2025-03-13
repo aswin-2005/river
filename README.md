@@ -143,29 +143,8 @@ python socket_server.py
 - Frontend is deployed on [Vercel](https://vercel.com)
 - Both backend servers are deployed on [Railway](https://railway.app)
 
-## 🔒 Environment Variables
-
-### Frontend (.env)
-```
-VITE_API_URL=
-VITE_WS_URL=
-```
-
-### Flask Backend (.env)
-```
-DATABASE_URL=
-API_KEY=
-```
-
-### WebSocket Backend (.env)
-```
-WS_PORT=
-```
 
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
